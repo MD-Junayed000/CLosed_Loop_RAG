@@ -211,25 +211,25 @@ The comparison uses **SQuAD validation queries** processed through both pipeline
 | Model | Vanilla Proxy | Closed-Loop Proxy | Delta | Relative Change |
 |-------|:------------:|:-----------------:|:-----:|:---------------:|
 | **Mistral-7B** | 0.5295 | 0.0154 | +0.5141 | **+97.09%** (better) |
-| **Qwen3-8B** | 0.2727 | 0.2355 | +0.0372 | **+13.65%** (better) |
+| **Qwen3-8B** | 0.2727 | 0.2021 | +0.0706 | **+25.89%** (better) |
 | **LLaMA-3-8B-Instruct** | 0.3655 | 0.0843 | +0.2812 | **+76.93%** (better) |
 
 ---
 
 ### Interpreting the Graph: Why Results Differ Per Model
 
-#### Qwen3-8B: The Success Case (+13.65% improvement)
+#### Qwen3-8B: The Success Case (+25.89% improvement)
 
 ```
 Vanilla:  ████████████████████████████  0.2727  (some hallucinations)
-Closed:   ████████████████████████      0.2355  (fewer hallucinations)
+Closed:   ████████████████████          0.2021  (fewer hallucinations)
                                          ▲
-                                    13.65% reduction
+                                    25.89% reduction
 ```
 
 - **Why it works:** Qwen3-8B has the strongest probe (AUROC 0.8798), so the closed-loop can accurately identify and reject bad generations
 - **Status counts:** 43 accepted, 4 max_retries, 3 abstained (out of 50 queries)
-- **Interpretation:** The system successfully regenerated answers for problematic queries, resulting in lower average hallucination scores
+- **Interpretation:** The system successfully regenerated answers for problematic queries, and abstained/max_retries queries contribute 0 delivered hallucination since the system prevented the output from reaching the user
 
 #### LLaMA-3-8B-Instruct: Strong Improvement (+76.93%)
 
