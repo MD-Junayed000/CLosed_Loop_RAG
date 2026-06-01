@@ -8,16 +8,8 @@
 
 This repository implements a **Closed-Loop RAG (Retrieval-Augmented Generation) Hallucination Detection System** that uses internal hidden-state probes to detect and mitigate hallucinations in LLM-generated text.
 
-```
-CLosed_Loop_RAG/
-├── llama_colab_a100_ragtruth18k.ipynb    # LLaMA-3-8B-Instruct experiment
-├── mistral_colab_a100_ragtruth18k.ipynb  # Mistral-7B experiment
-├── qwen_colab_a100_ragtruth18k.ipynb     # Qwen3-8B experiment
-├── compare-models.ipynb                   # Cross-model comparison & analysis
-├── llama_outputs/                         # LLaMA results + visualizations
-├── mistal_outputs/                        # Mistral results + visualizations
-└── qwen_outputs/                          # Qwen results + visualizations
-```
+
+
 
 ### Core Methodology
 
@@ -25,8 +17,8 @@ The system implements **two types of hidden-state probes** trained on RAGTruth-1
 
 | Probe | Full Name | What It Detects |
 |-------|-----------|-----------------|
-| **CEV** | Context External Verification | Whether the generated text is *grounded* in the retrieved context |
-| **IAV** | Internal Answer Verification | Whether the model's internal knowledge *conflicts* with its output |
+| **CEV** | Contextual Embedding Vector | Whether the generated text is *grounded* in the retrieved context |
+| **IAV** | Intermediate Activation Vector | Whether the model's internal knowledge *conflicts* with its output |
 
 These probes are **2-layer MLP classifiers** that read the hidden states of the LLM at inference time and output a probability of hallucination.
 
@@ -305,6 +297,3 @@ The work is solid and publication-worthy. All previously identified weaknesses h
 - HaluEval: [Li et al., 2023](https://arxiv.org/abs/2305.11747)
 - Closed-Loop RAG concepts: [Fractal AI Blog](https://fractal.ai/blog/closed-loop-rag)
 
----
-
-*Analysis updated on May 31, 2026. All findings are based on the repository's own CSV outputs and notebook cells. Content was rephrased for compliance with licensing restrictions.*
