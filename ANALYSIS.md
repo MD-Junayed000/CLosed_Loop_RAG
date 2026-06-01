@@ -43,9 +43,9 @@ These probes are **2-layer MLP classifiers** that read the hidden states of the 
 
 | Model | Fused AUROC | CEV AUROC | IAV AUROC | Mean Accuracy | HaluEval OOD | Runtime |
 |-------|:-----------:|:---------:|:---------:|:-------------:|:------------:|:-------:|
-| **Mistral-7B** | 0.8515 | 0.8392 | 0.8490 | 77.40% | 0.026* | 105 min |
-| **Qwen3-8B** | **0.8798** | **0.8723** | **0.8751** | **78.78%** | **0.9062** | 94.0 min |
-| **LLaMA-3-8B-Instruct** | 0.8665 | 0.8550 | 0.8630 | 78.68% | 0.8075 | 76.3 min |
+| **Mistral-7B** | 0.8515 | 0.8392 | 0.8490 | 77.40% | 0.026* | 101 min |
+| **Qwen3-8B** | **0.8798** | **0.8723** | **0.8751** | **78.78%** | **0.9062** | 125 min |
+| **LLaMA-3-8B-Instruct** | 0.8665 | 0.8550 | 0.8630 | 78.68% | 0.8075 | 74 min |
 
 > *Mistral's HaluEval raw AUROC of 0.026 indicates a **polarity inversion** — a genuine research finding demonstrating that cross-domain transfer of hidden-state probes is an emergent capability that scales with pre-training data volume.
 
@@ -81,13 +81,15 @@ The correct interpretation framework:
 
 **The key insight:** A system with 0% delivered hallucination but 100% abstention would be "perfect" at preventing hallucination but useless for answering questions. The **optimal** system has high acceptance rate AND low delivered hallucination.
 
-### Per-Model Breakdown with Acceptance Rates
+### Per-Model Breakdown with Acceptance Rates and 95% Bootstrap Confidence Intervals
 
-| Model | Vanilla Proxy | Closed-Loop Proxy | Acceptance Rate | Abstention Rate | Assessment |
+| Model | Vanilla Proxy [95% CI] | Closed-Loop Proxy [95% CI] | Acceptance Rate | Abstention Rate | Statistical Significance |
 |-------|:---:|:---:|:---:|:---:|:---:|
-| **Qwen3-8B** | 0.2727 | 0.2021 | **86%** (43/50) | 14% | ✅ Best balance — high utility, lower hallucination |
-| **LLaMA-3-8B** | 0.3655 | 0.0843 | **48%** (48/100) | 52% | ⚠️ Moderate — significant utility cost |
-| **Mistral-7B** | 0.5366 | 0.0280 | **10%** (10/100) | 89% | ❌ Over-aggressive — very low utility |
+| **Qwen3-8B** | 0.2379 [0.2108, 0.2662] | 0.1658 [0.1427, 0.1854] | **86%** (86/100) | 14% | ✅ CIs do NOT overlap |
+| **LLaMA-3-8B** | 0.3655 [0.3213, 0.4104] | 0.0581 [0.0437, 0.0745] | **48%** (48/100) | 52% | ✅ CIs do NOT overlap |
+| **Mistral-7B** | 0.5366 [0.5098, 0.5645] | 0.0280 [0.0125, 0.0455] | **10%** (10/100) | 90% | ✅ CIs do NOT overlap |
+
+**Key Finding:** For ALL 3 models, the 95% bootstrap confidence intervals do NOT overlap between vanilla and closed-loop, confirming that the improvement is **statistically significant** at the 95% confidence level.
 
 **Conclusion:** Qwen3-8B demonstrates the best balance between hallucination prevention and answer utility. Mistral's result, while showing excellent hallucination prevention, comes at an unacceptable utility cost for most applications.
 
@@ -127,7 +129,7 @@ Abstention rate is now reported as a **separate, primary metric** in `baseline_c
 
 | Model | Queries | Accepted | Abstained | Max Retries | Acceptance Rate |
 |-------|:-------:|:--------:|:---------:|:-----------:|:---------------:|
-| Qwen3-8B | 50 | 43 | 3 | 4 | **86%** |
+| Qwen3-8B | 100 | 86 | 9 | 5 | **86%** |
 | LLaMA-3-8B | 100 | 48 | 52 | 0 | **48%** |
 | Mistral-7B | 100 | 10 | 89 | 1 | **10%** |
 
